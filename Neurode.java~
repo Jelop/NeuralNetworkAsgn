@@ -1,0 +1,15 @@
+import java.util.*;
+
+public class Neurode{
+
+    private double[] weights;
+
+    public Neurode(int nextLayer){
+
+        Random random = new Random();
+        weights = new double[nextLayer];
+        for(int i = 0; i < nextLayer; i++){
+            weights[i] = random.nextDouble() % 0.6 - 0.3;
+            System.out.println(weights[i]);
+        }
+        
