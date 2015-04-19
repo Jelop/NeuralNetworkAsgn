@@ -65,6 +65,7 @@ public class NetworkApp{
         NeuralNetwork net = new NeuralNetwork(input, hidden, output, learning,
                                               momentum, errCriterion,
                                               patterns, teacher);
+        net.learn();
     }
 }
             

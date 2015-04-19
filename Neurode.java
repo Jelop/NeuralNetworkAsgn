@@ -5,8 +5,10 @@ public class Neurode{
     private double bias = 0;
     private double[] weights;
     private double[] changes;
+    private double[] prevChanges;
     
     private double activation;
+    private double error;
     
     public Neurode(int nextLayer, boolean inputNeurode, boolean outputNeurode){
 
@@ -16,9 +18,9 @@ public class Neurode{
         if(!outputNeurode){
             weights = new double[nextLayer];
             changes = new double[nextLayer];
+            prevChanges = new double[nextLayer];
             for(int i = 0; i < nextLayer; i++){
                 weights[i] = random.nextDouble() * 0.6 - 0.3;
-                System.out.println(weights[i]);
             }
         }
     }
@@ -34,9 +36,13 @@ public class Neurode{
     public double getBias(){
         return bias;
     }
+
+    public double getError(){
+        return error;
+    }
     
-    public void setWeight(int index, double change){
-        changes[index] = change;
+    public void setWeight(int index, double change, double momentum){
+        changes[index] = change + (momentum * prevChanges[index]);
     }
 
     public void setActivation(double activation){
@@ -47,10 +53,15 @@ public class Neurode{
         bias += change;
     }
 
+    public void setError(double error){
+        this.error = error;
+    }
+
     public void updateWeights(){
         
         for(int i = 0; i < weights.length; i++){
             weights[i] += changes[i];
+            prevChanges[i] = changes[i];
         }
     }
                                               
