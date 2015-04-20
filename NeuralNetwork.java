@@ -6,6 +6,7 @@ public class NeuralNetwork{
     double learning, momentum, errCriterion;
     double[][] patterns;
     double[][] teacher;
+    int[] indexShuffle;
 
     public NeuralNetwork(int inputsize, int hiddensize, int outputsize,
                            double learning, double momentum,
@@ -27,6 +28,11 @@ public class NeuralNetwork{
             output[i] = new Neurode(0, false, true);
         }
 
+        indexShuffle = new int[patterns.length];
+        for(int i = 0; i < indexShuffle.length; i++){
+            indexShuffle[i] = i;
+        }
+        
         this.learning = learning;
         this.momentum = momentum;
         this.errCriterion = errCriterion;
@@ -41,12 +47,12 @@ public class NeuralNetwork{
         int epochs = 0;
         //For each pattern
         while(true){
-            //shuffle(patterns);
-            System.out.println("PopError " + popError);
+            shuffle();
+            // System.out.println("PopError " + popError);
         for(int i = 0; i < patterns.length; i++){
             //Sets activation for each neurode in each layer
             for(int j = 0; j < input.length; j++){
-                input[j].setActivation(patterns[i][j]);
+                input[j].setActivation(patterns[indexShuffle[i]][j]);
             }
 
             for(int j = 0; j < hidden.length; j++){
@@ -59,8 +65,8 @@ public class NeuralNetwork{
 
             for(int j = 0; j < output.length; j++){
                 double activation = output[j].getActivation();
-                double error = (teacher[i][j] - activation) * activation *
-                    (1 - activation);
+                double error = (teacher[indexShuffle[i]][j] - activation)
+                    * activation * (1 - activation);
                 output[j].setError(error);
                 calculateWeightChange(j, error, hidden, output);
             }
@@ -86,7 +92,7 @@ public class NeuralNetwork{
             double patternError = 0;
             for(int j = 0; j < output.length; j++){
                 patternError += Math.pow(
-                                         (teacher[i][j] -
+                                         (teacher[indexShuffle[i]][j] -
                                           output[j].getActivation()), 2);
             }
             populationErrSum += patternError;
@@ -102,26 +108,30 @@ public class NeuralNetwork{
         }
 
         System.out.println("Epochs: " + epochs);
-        System.out.println("Input: " + input[0].getActivation() + " " +
-                           input[1].getActivation());
-        System.out.println("Output: " + output[0].getActivation());
+        System.out.print("Input: ");
+        for(int j = 0; j < input.length; j++){
+            System.out.print(input[j].getActivation() + " ");
+        }
+        System.out.print("\nOutput: ");
+        for(int j = 0; j < output.length; j++){
+            System.out.print(output[j].getActivation() + " ");
+        }
+        System.out.println();
     }
 
 
 
-     public void shuffle(double[][] nums){
+     public void shuffle(){
         Random rand = new Random();
-        for(int i = nums.length - 1; i > 0; i--){
+        for(int i = indexShuffle.length - 1; i > 0; i--){
             int j = rand.nextInt(i+1);
-            double[] temp = nums[i];
-            nums[i] = nums[j];
-            nums[j] = temp;
+            int temp = indexShuffle[i];
+            indexShuffle[i] = indexShuffle[j];
+            indexShuffle[j] = temp;
         }
 
-        /*for(int i = 0; i < patterns.length; i++){
-            System.out.println(Arrays.toString(patterns[i]));
-        }
-        System.out.println();*/
+        /*System.out.println(Arrays.toString(indexShuffle));
+          System.out.println();*/
     }
 
     public double calculateActivation(int index, Neurode[] prevLayer,
