@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class NeuralNetwork{
 
     Neurode[] input, hidden, output;
@@ -39,7 +41,8 @@ public class NeuralNetwork{
         int epochs = 0;
         //For each pattern
         while(true){
-            // System.out.println("PopError " + popError);
+            //shuffle(patterns);
+            System.out.println("PopError " + popError);
         for(int i = 0; i < patterns.length; i++){
             //Sets activation for each neurode in each layer
             for(int j = 0; j < input.length; j++){
@@ -95,6 +98,7 @@ public class NeuralNetwork{
         populationErrSum = 0;
         epochs++;
         if(popError < errCriterion) break;
+        //System.out.println("Epochs: " + epochs);
         }
 
         System.out.println("Epochs: " + epochs);
@@ -102,7 +106,24 @@ public class NeuralNetwork{
                            input[1].getActivation());
         System.out.println("Output: " + output[0].getActivation());
     }
-            
+
+
+
+     public void shuffle(double[][] nums){
+        Random rand = new Random();
+        for(int i = nums.length - 1; i > 0; i--){
+            int j = rand.nextInt(i+1);
+            double[] temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+
+        /*for(int i = 0; i < patterns.length; i++){
+            System.out.println(Arrays.toString(patterns[i]));
+        }
+        System.out.println();*/
+    }
+
     public double calculateActivation(int index, Neurode[] prevLayer,
                                       Neurode[] layer){
 
