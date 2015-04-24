@@ -47,6 +47,10 @@ public class NeuralNetwork{
         int epochs = 0;
         //For each pattern
         while(true){
+            if(epochs % 100 == 0){
+                System.out.println("Epochs: " + epochs);
+                System.out.println("Population error " + popError);
+            }
             shuffle();
             // System.out.println("PopError " + popError);
         for(int i = 0; i < patterns.length; i++){
@@ -129,9 +133,6 @@ public class NeuralNetwork{
             indexShuffle[i] = indexShuffle[j];
             indexShuffle[j] = temp;
         }
-
-        /*System.out.println(Arrays.toString(indexShuffle));
-          System.out.println();*/
     }
 
     public double calculateActivation(int index, Neurode[] prevLayer,
@@ -156,5 +157,43 @@ public class NeuralNetwork{
         layer[index].setBias(learning * error * 1);
         
     }
-    
+
+    public void printWeights(){
+
+        System.out.println("\nHidden Weights");
+        for(int i = 0; i < hidden.length; i++){
+            for(int j = 0; j < input.length; j++){
+                System.out.println("I" + j + " -> " + "H" + i + ": " +
+                                   input[j].getWeight(i));
+            }
+            System.out.println("H" + i + " Bias: " + hidden[i].getBias() +"\n");
+        }
+
+        System.out.println("\nOutput Weights");
+        for(int i = 0; i < output.length; i++){
+            for(int j = 0; j < hidden.length; j++){
+                System.out.println("H" + j + " -> " + "O" + i + ": " +
+                                   hidden[j].getWeight(i));
+            }
+            System.out.println("O" + i + " Bias: " + output[i].getBias() +"\n");
+        }
+    }
+
+    public void printActivations(){
+
+        System.out.println("\nInput Activations");
+        for(int i = 0; i < input.length; i++){
+            System.out.println("I" + i + ": " + input[i].getActivation());
+        }
+
+        System.out.println("\nHidden Activations");
+        for(int i = 0; i < hidden.length; i++){
+            System.out.println("H" + i + ": " + hidden[i].getActivation());
+        }
+
+        System.out.println("\nOutput Activations");
+        for(int i = 0; i < output.length; i++){
+            System.out.println("O" + i + ": " + output[i].getActivation());
+        }
+    }
 }
