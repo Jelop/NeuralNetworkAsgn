@@ -48,20 +48,6 @@ public class NetworkApp{
             ex.printStackTrace();
         }
 
-        /*System.out.println(input);
-        System.out.println(hidden);
-        System.out.println(output);
-        System.out.println(lines);
-        System.out.println(learning);
-        System.out.println(momentum);
-        System.out.println(errCriterion);
-        for(int i = 0; i < patterns.length; i++){
-            System.out.println(Arrays.toString(patterns[i]));
-        }
-        for(int i = 0; i < teacher.length; i++){
-            System.out.println(Arrays.toString(teacher[i]));
-            }*/
-
         Scanner userinput = new Scanner(System.in);
         NeuralNetwork net = new NeuralNetwork(input, hidden, output, learning,
                                               momentum, errCriterion,
@@ -93,7 +79,7 @@ public class NetworkApp{
             case "q":
                 System.exit(0);
                 break;
-            }
+            } 
         }
     }
 }
