@@ -9,6 +9,8 @@ public class NetworkApp{
         double learning = 0, momentum = 0, errCriterion = 0;
         double[][] patterns = new double[1][1];
         double[][] teacher = new double[1][1];
+        double[][] testpatterns = new double[0][0];
+        double[][] testteacher = new double[0][0];
         
         
 
@@ -42,16 +44,49 @@ public class NetworkApp{
                     teacher[i][j] = teachdata.nextDouble();
                 }
             }
+            
+            if(args.length == 0){
+                System.out.print("Use cl argument boolean to indicate desire");
+                System.out.println(" to parse test patterns");
+                System.exit(0);
+            }
+            
+            if(Boolean.parseBoolean(args[0])){
+                lines = 0;
+                counter = new Scanner(new File("test.txt"));
+                while(counter.hasNextLine()){
+                    counter.nextLine();
+                    lines++;
+                }
+
+                testpatterns = new double[lines][input];
+                inputdata = new Scanner(new File("test.txt"));
+                for(int i = 0; i < testpatterns.length; i++){
+                    for(int j = 0; j < testpatterns[i].length; j++){
+                        testpatterns[i][j] = inputdata.nextDouble();
+                    }
+                }
+
+                testteacher = new double[lines][output];
+                teachdata = new Scanner(new File("testteach.txt"));
+                for(int i = 0; i < testteacher.length; i++){
+                    for(int j = 0; j < testteacher[i].length; j++){
+                        testteacher[i][j] = teachdata.nextDouble();
+                    }
+                }
+            }
 
         }catch(Exception ex){
             System.err.println("Out of bounds array or IO problem");
             ex.printStackTrace();
+            System.exit(0);
         }
 
         Scanner userinput = new Scanner(System.in);
         NeuralNetwork net = new NeuralNetwork(input, hidden, output, learning,
                                               momentum, errCriterion,
-                                              patterns, teacher);
+                                              patterns, teacher, testpatterns,
+                                              testteacher);
         
         while(userinput.hasNext()){
             switch(userinput.next()){
@@ -60,12 +95,17 @@ public class NetworkApp{
             case "c":
                 net = new NeuralNetwork(input, hidden, output, learning,
                                         momentum, errCriterion,
-                                        patterns, teacher);
+                                        patterns, teacher, testpatterns,
+                                        testteacher);
                 System.out.println("New network initialised");
                 break;
                 
             case "l":
                 net.learn();
+                break;
+
+            case "t":
+                net.test();
                 break;
 
             case "w":
