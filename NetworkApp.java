@@ -7,8 +7,8 @@ public class NetworkApp{
 
         int input = 0, hidden = 0, output = 0, lines = 0;
         double learning = 0, momentum = 0, errCriterion = 0;
-        double[][] patterns = new double[1][1];
-        double[][] teacher = new double[1][1];
+        double[][] patterns = new double[0][0];
+        double[][] teacher = new double[0][0];
         double[][] testpatterns = new double[0][0];
         double[][] testteacher = new double[0][0];
         
