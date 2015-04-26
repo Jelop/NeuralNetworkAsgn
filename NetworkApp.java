@@ -11,8 +11,9 @@ public class NetworkApp{
         double[][] teacher = new double[0][0];
         double[][] testpatterns = new double[0][0];
         double[][] testteacher = new double[0][0];
-        double[][] datasum = new double[500][2];
-        double[][] temp = new double[500][2];
+        //double[][] datasum = new double[500][2];
+        //double[][] temp = new double[500][2];
+        int[] epochs = new int[50];
         boolean parseTest;
 
         if(args.length == 0){
@@ -93,9 +94,40 @@ public class NetworkApp{
                                               patterns, teacher, testpatterns,
                                               testteacher);
 
+        
+        for(momentum = 0.05; momentum < 3; momentum += 0.05){
+            int sum = 0;
+            int num = 50;
+            for(int i = 0; i < 50; i++){
+                net = new NeuralNetwork(input, hidden, output, learning,
+                                        momentum, errCriterion,
+                                        patterns, teacher, testpatterns,
+                                        testteacher);
+                epochs[i] = net.learn(parseTest);
+                if(epochs[i] == 10000){
+                    num--;
+                } else {
+                    sum += epochs[i];
+                }
+            }
 
-        //Used for generating graph data
+            double mean = (double)sum/(double)num;
+            double stddev = 0;
+            for(int i = 0; i < 50; i++){
+                if(epochs[i] != 10000){
+                    stddev += Math.pow((epochs[i] - mean), 2);
+                }
+            }
 
+            stddev /= 49;
+            stddev = Math.sqrt(stddev);
+                
+            System.out.printf("%.2f %.4f %.4f\n", momentum, mean, stddev);
+        }
+            
+        
+        //Used for generating generalisation graph data
+        /*
         for(int i = 0; i < 50; i++){
             net = new NeuralNetwork(input, hidden, output, learning,
                                     momentum, errCriterion,
@@ -123,6 +155,7 @@ public class NetworkApp{
         for(int j = 0; j < datasum.length; j++){
             System.out.println(datasum[j][1]);
         }
+        */
         /* while(userinput.hasNext()){
             switch(userinput.next()){
 
@@ -160,6 +193,7 @@ public class NetworkApp{
                 System.exit(0);
                 break;
             } 
+            
             }*/
     }
 }

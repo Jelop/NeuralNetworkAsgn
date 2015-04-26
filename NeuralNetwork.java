@@ -38,7 +38,7 @@ public class NeuralNetwork{
             indexShuffle[i] = i;
         }
 
-        data = new double[500][2];
+        //data = new double[500][2];
         
         this.learning = learning;
         this.momentum = momentum;
@@ -49,13 +49,13 @@ public class NeuralNetwork{
         this.testteacher = testteacher;
     }
 
-    public double[][] learn(boolean generalise){
+    public int learn(boolean generalise){
 
         double popError = 1;
         double populationErrSum = 0;
         int epochs = 0;
         //For each pattern
-        while(true){
+        while(epochs < 10000){
             /* if(epochs % 100 == 0){
                 System.out.println("Epochs: " + epochs);
                 System.out.println("Population error " + popError);
@@ -91,19 +91,21 @@ public class NeuralNetwork{
                                                 patterns.length));
         populationErrSum = 0;
 
-        if(generalise){
+        /*if(generalise){
             data[epochs][0] = popError;
             data[epochs][1] = test();
-        }
+            }*/
         epochs++;
-        // if(popError < errCriterion) break;
-        if(epochs == 500) break;
+        if(popError < errCriterion) break;
+        //if(epochs == 500) break;
         }
-
-        return data;
+        
         /*System.out.println("Epochs: " + epochs);
         System.out.println("PopError: " + popError);
         System.out.println();*/
+
+        return epochs;
+       
     }
 
 
