@@ -10,6 +10,8 @@ public class NeuralNetwork{
     double[][] testteacher;
     int[] indexShuffle;
 
+    double[][] data;
+
     public NeuralNetwork(int inputsize, int hiddensize, int outputsize,
                            double learning, double momentum,
                            double errCriterion, double[][] patterns,
@@ -35,6 +37,8 @@ public class NeuralNetwork{
         for(int i = 0; i < indexShuffle.length; i++){
             indexShuffle[i] = i;
         }
+
+        data = new double[500][2];
         
         this.learning = learning;
         this.momentum = momentum;
@@ -45,18 +49,17 @@ public class NeuralNetwork{
         this.testteacher = testteacher;
     }
 
-    public void learn(){
+    public double[][] learn(boolean generalise){
 
         double popError = 1;
         double populationErrSum = 0;
         int epochs = 0;
         //For each pattern
         while(true){
-            epochs++;
-            if(epochs % 100 == 0){
+            /* if(epochs % 100 == 0){
                 System.out.println("Epochs: " + epochs);
                 System.out.println("Population error " + popError);
-            }
+                }*/
             shuffle();
             // System.out.println("PopError " + popError);
             
@@ -88,12 +91,19 @@ public class NeuralNetwork{
                                                 patterns.length));
         populationErrSum = 0;
 
-        if(popError < errCriterion) break;
+        if(generalise){
+            data[epochs][0] = popError;
+            data[epochs][1] = test();
+        }
+        epochs++;
+        // if(popError < errCriterion) break;
+        if(epochs == 500) break;
         }
 
-        System.out.println("Epochs: " + epochs);
+        return data;
+        /*System.out.println("Epochs: " + epochs);
         System.out.println("PopError: " + popError);
-        System.out.println();
+        System.out.println();*/
     }
 
 
@@ -107,7 +117,7 @@ public class NeuralNetwork{
         }
     }
 
-    public void test(){
+    public double test(){
 
         double popError = 1;
         double populationErrSum = 0;
@@ -139,7 +149,8 @@ public class NeuralNetwork{
         popError = (double)(populationErrSum / (output.length *
                                                 patterns.length));
         populationErrSum = 0;
-        System.out.println("Training Patters PopError: " + popError);
+        // System.out.println("Training Patters PopError: " + popError);
+        return popError;
     }
 
         

@@ -11,8 +11,17 @@ public class NetworkApp{
         double[][] teacher = new double[0][0];
         double[][] testpatterns = new double[0][0];
         double[][] testteacher = new double[0][0];
-        
-        
+        double[][] datasum = new double[500][2];
+        double[][] temp = new double[500][2];
+        boolean parseTest;
+
+        if(args.length == 0){
+            System.out.print("Use cl argument boolean to indicate desire");
+            System.out.println(" to parse test patterns");
+            System.exit(0);
+        }
+
+        parseTest = Boolean.parseBoolean(args[0]);
 
         try{
             Scanner parameters = new Scanner(new File("param.txt"));
@@ -45,13 +54,9 @@ public class NetworkApp{
                 }
             }
             
-            if(args.length == 0){
-                System.out.print("Use cl argument boolean to indicate desire");
-                System.out.println(" to parse test patterns");
-                System.exit(0);
-            }
+          
             
-            if(Boolean.parseBoolean(args[0])){
+            if(parseTest){
                 lines = 0;
                 counter = new Scanner(new File("test.txt"));
                 while(counter.hasNextLine()){
@@ -87,8 +92,38 @@ public class NetworkApp{
                                               momentum, errCriterion,
                                               patterns, teacher, testpatterns,
                                               testteacher);
-        
-        while(userinput.hasNext()){
+
+
+        //Used for generating graph data
+
+        for(int i = 0; i < 50; i++){
+            net = new NeuralNetwork(input, hidden, output, learning,
+                                    momentum, errCriterion,
+                                    patterns, teacher, testpatterns,
+                                    testteacher);
+            temp = net.learn(parseTest);
+            for(int j = 0; j < datasum.length; j++){
+                for(int k = 0; k < datasum[j].length; k++){
+                    datasum[j][k] += temp[j][k];
+                }
+            }
+        }
+
+        for(int j = 0; j < datasum.length; j++){
+            for(int k = 0; k < datasum[j].length; k++){
+                datasum[j][k] = datasum[j][k]/50;
+            }
+        }
+
+        for(int j = 0; j < datasum.length; j++){
+                System.out.println(datasum[j][0]);
+            }
+        System.out.println();
+
+        for(int j = 0; j < datasum.length; j++){
+            System.out.println(datasum[j][1]);
+        }
+        /* while(userinput.hasNext()){
             switch(userinput.next()){
 
 
@@ -101,13 +136,18 @@ public class NetworkApp{
                 break;
                 
             case "l":
-                net.learn();
+                net.learn(parseTest);
                 break;
 
             case "t":
-                net.test();
+                if(parseTest)
+                    net.test();
                 break;
 
+            case "g":
+                net.learn(parseTest);
+                break;
+                
             case "w":
                 net.printWeights();
                 break;
@@ -120,7 +160,7 @@ public class NetworkApp{
                 System.exit(0);
                 break;
             } 
-        }
+            }*/
     }
 }
             
