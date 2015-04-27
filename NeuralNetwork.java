@@ -6,17 +6,12 @@ public class NeuralNetwork{
     double learning, momentum, errCriterion;
     double[][] patterns;
     double[][] teacher;
-    double[][] testpatterns;
-    double[][] testteacher;
     int[] indexShuffle;
-
-    double[][] data;
-
+    
     public NeuralNetwork(int inputsize, int hiddensize, int outputsize,
                            double learning, double momentum,
                            double errCriterion, double[][] patterns,
-                         double[][] teacher, double[][] testpatterns,
-                         double[][] testteacher){
+                         double[][] teacher){
 
         input = new Neurode[inputsize];
         for(int i = 0; i < input.length; i++){
@@ -37,79 +32,65 @@ public class NeuralNetwork{
         for(int i = 0; i < indexShuffle.length; i++){
             indexShuffle[i] = i;
         }
-
-        //data = new double[500][2];
-        
+ 
         this.learning = learning;
         this.momentum = momentum;
         this.errCriterion = errCriterion;
         this.patterns = patterns;
-        this.teacher = teacher;
-        this.testpatterns = testpatterns;
-        this.testteacher = testteacher;
+        this.teacher = teacher;    
     }
 
-    public int learn(boolean generalise){
+    public void learn(){
 
         double popError = 1;
         double populationErrSum = 0;
         int epochs = 0;
         //For each pattern
-        while(epochs < 10000){
-            /* if(epochs % 100 == 0){
+        while(true){
+            epochs++;
+            if(epochs % 100 == 0){
                 System.out.println("Epochs: " + epochs);
                 System.out.println("Population error " + popError);
-                }*/
+            }
             shuffle();
-            // System.out.println("PopError " + popError);
-            
-        for(int i = 0; i < patterns.length; i++){
+                        
+            for(int i = 0; i < patterns.length; i++){
            
-            forwardPass(i);
-            backwardPass(i);
+                forwardPass(i);
+                backwardPass(i);
             
-            for(int j = 0; j < hidden.length; j++){
-                hidden[j].updateWeights();
+                for(int j = 0; j < hidden.length; j++){
+                    hidden[j].updateWeights();
+                }
+
+                for(int j = 0; j < input.length; j++){
+                    input[j].updateWeights();
+                }
+
+                double patternError = 0;
+                for(int j = 0; j < output.length; j++){
+                    patternError += Math.pow(
+                                             (teacher[indexShuffle[i]][j] -
+                                              output[j].getActivation()), 2);
+                }
+            
+                populationErrSum += patternError;
+            
             }
 
-            for(int j = 0; j < input.length; j++){
-                input[j].updateWeights();
-            }
-
-            double patternError = 0;
-            for(int j = 0; j < output.length; j++){
-                patternError += Math.pow(
-                                         (teacher[indexShuffle[i]][j] -
-                                          output[j].getActivation()), 2);
-            }
-            
-            populationErrSum += patternError;
-            
-        }
-
-        popError = (double)(populationErrSum / (output.length *
-                                                patterns.length));
-        populationErrSum = 0;
-
-        /*if(generalise){
-            data[epochs][0] = popError;
-            data[epochs][1] = test();
-            }*/
-        epochs++;
-        if(popError < errCriterion) break;
-        //if(epochs == 500) break;
+            popError = (double)(populationErrSum / (output.length *
+                                                    patterns.length));
+            populationErrSum = 0;
+            if(popError < errCriterion) break;
         }
         
-        /*System.out.println("Epochs: " + epochs);
+        System.out.println("Epochs: " + epochs);
         System.out.println("PopError: " + popError);
-        System.out.println();*/
-
-        return epochs;
-       
+        System.out.println();
     }
 
 
-     public void shuffle(){
+    public void shuffle(){
         Random rand = new Random();
         for(int i = indexShuffle.length - 1; i > 0; i--){
             int j = rand.nextInt(i+1);
@@ -118,44 +99,6 @@ public class NeuralNetwork{
             indexShuffle[j] = temp;
         }
     }
-
-    public double test(){
-
-        double popError = 1;
-        double populationErrSum = 0;
-        
-        for(int i = 0; i < testpatterns.length; i++){
-
-            for(int j = 0; j < input.length; j++){
-                input[j].setActivation(testpatterns[i][j]);
-            }
-
-            for(int j = 0; j < hidden.length; j++){
-                hidden[j].setActivation(calculateActivation(j, input, hidden));
-            }
-
-            for(int j = 0; j < output.length; j++){
-                output[j].setActivation(calculateActivation(j, hidden, output));
-            }
-            
-            double patternError = 0;
-            for(int j = 0; j < output.length; j++){
-                patternError += Math.pow(
-                                         (testteacher[i][j] -
-                                          output[j].getActivation()), 2);
-            }
-
-            populationErrSum += patternError;
-        }
-
-        popError = (double)(populationErrSum / (output.length *
-                                                patterns.length));
-        populationErrSum = 0;
-        // System.out.println("Training Patters PopError: " + popError);
-        return popError;
-    }
-
-        
 
     public void forwardPass(int i){
         //Sets activation for each neurode in each layer
@@ -214,6 +157,24 @@ public class NeuralNetwork{
 
         layer[index].setBias(learning * error * 1);
         
+    }
+
+    public void test(double[] pattern){
+
+        for(int j = 0; j < input.length; j++){
+            input[j].setActivation(pattern[j]);
+        }
+
+        for(int j = 0; j < hidden.length; j++){
+            hidden[j].setActivation(calculateActivation(j, input, hidden));
+        }
+
+        for(int j = 0; j < output.length; j++){
+            output[j].setActivation(calculateActivation(j, hidden, output));
+        }
+
+        printActivations();
+            
     }
 
     public void printWeights(){
