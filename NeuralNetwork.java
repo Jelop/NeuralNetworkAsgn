@@ -1,5 +1,11 @@
+//Author: Joshua La Pine - April 2015
 import java.util.*;
 
+/**
+ * Responsible for all of the backpropagation learning and all the methods
+ * associated with that. Contains several print functions for displaying
+ * the state of the network
+ */
 public class NeuralNetwork{
 
     Neurode[] input, hidden, output;
@@ -7,7 +13,11 @@ public class NeuralNetwork{
     double[][] patterns;
     double[][] teacher;
     int[] indexShuffle;
-    
+
+    /**
+     * Sets up the initial state of the network by setting various parameters
+     * and initialising the layers of the network as arrays of Neurode objects
+     */
     public NeuralNetwork(int inputsize, int hiddensize, int outputsize,
                            double learning, double momentum,
                            double errCriterion, double[][] patterns,
@@ -40,6 +50,10 @@ public class NeuralNetwork{
         this.teacher = teacher;    
     }
 
+    /**
+     * Controls the flow of the backpropagation learning algorithm and
+     * calculates population error.
+     */
     public void learn(){
 
         double popError = 1;
@@ -89,7 +103,11 @@ public class NeuralNetwork{
         System.out.println();
     }
 
-
+    /**
+     * Shuffles an array of integers, those integers are then used to present
+     * input patterns in a random order to the network. This is a requirement
+     * of sequential learning
+     */
     public void shuffle(){
         Random rand = new Random();
         for(int i = indexShuffle.length - 1; i > 0; i--){
@@ -100,6 +118,9 @@ public class NeuralNetwork{
         }
     }
 
+    /**
+     * Sets the activations functions for every neurode in the network
+     */
     public void forwardPass(int i){
         //Sets activation for each neurode in each layer
         for(int j = 0; j < input.length; j++){
@@ -115,6 +136,9 @@ public class NeuralNetwork{
         }
     }
 
+    /**
+     * Calculates the error and weight changes of every neurode in the network
+     */
     public void backwardPass(int i){
         
         for(int j = 0; j < output.length; j++){
@@ -135,7 +159,11 @@ public class NeuralNetwork{
             calculateWeightChange(j, error, input, hidden);
         }
     }
-    
+
+    /**
+     * Calculates the activation function of the unit index in the Neurode
+     * array layer. Used repeatedly by the forwardpass method
+     */
     public double calculateActivation(int index, Neurode[] prevLayer,
                                       Neurode[] layer){
 
@@ -147,6 +175,10 @@ public class NeuralNetwork{
         return (double)(1/(1 + Math.pow(Math.E, -sum)));
     }
 
+    /**
+     * Calculates the weight change of the unit index.
+     * Used repeatedly by the backwardpass method
+     */
     public void calculateWeightChange(int index, double error,
                                       Neurode[] prevLayer, Neurode[] layer){
 
@@ -159,6 +191,11 @@ public class NeuralNetwork{
         
     }
 
+    /**
+     * Called by the user once the network has learn a population.
+     * Calculates the activations for all the neurodes in the network and
+     * then prints them.
+     */
     public void test(double[] pattern){
 
         for(int j = 0; j < input.length; j++){
@@ -177,6 +214,9 @@ public class NeuralNetwork{
             
     }
 
+    /**
+     * It prints out all the weights in the network Neurode by Neurode.
+     */
     public void printWeights(){
 
         System.out.println("\nHidden Weights");
@@ -198,6 +238,10 @@ public class NeuralNetwork{
         }
     }
 
+
+    /**
+     * It prints out all the activations in the network Neurode by Neurode.
+     */
     public void printActivations(){
 
         System.out.println("\nInput Activations");

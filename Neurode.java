@@ -1,5 +1,11 @@
+//Author: Joshua La Pine - April 2015
 import java.util.*;
 
+/**
+ * Building block of my Neural Network implementation.
+ * Stores all of the weights of its forwards connections.
+ * And the previous weight changes to facilitate use of momentum
+ */
 public class Neurode{
 
     private double bias = 0;
@@ -9,7 +15,12 @@ public class Neurode{
     
     private double activation;
     private double error;
-    
+
+    /**
+     * Takes the size of the next layer as an int and uses it to initialise
+     * the weights array. 2 boolean flags determine which layer the neurode
+     * is in and initialises things accordingly.
+     */
     public Neurode(int nextLayer, boolean inputNeurode, boolean outputNeurode){
 
         Random random = new Random();
@@ -40,7 +51,11 @@ public class Neurode{
     public double getError(){
         return error;
     }
-    
+
+    /**
+     * Stores the weight change so it can be updated after the backwards
+     * bass of the backprop algorithm has completed.
+     */
     public void setWeight(int index, double change, double momentum){
         changes[index] = change + (momentum * prevChanges[index]);
     }
@@ -57,6 +72,9 @@ public class Neurode{
         this.error = error;
     }
 
+    /**
+     * Implements the weight changes stored in the changes array.
+     */
     public void updateWeights(){
         
         for(int i = 0; i < weights.length; i++){
